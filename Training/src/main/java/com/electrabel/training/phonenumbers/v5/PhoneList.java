@@ -58,4 +58,19 @@ public class PhoneList {
 		return result;
 	}
 
+	
+	/**
+	 * TODO try to do this with recursivity.
+	 * 
+	 * 1 sort list phoneList.sort();
+	 * 2 call recursive function phoneList.isConsistent();
+	 * 3 check cases:
+	 * - empty list = consistent
+	 * - list contains 1 phone  > remove element > recursive call
+	 * - list contains 2 phones > check prefix > remove element 
+	 * - list contains more than 2 phones > recursive?
+	 */
+	private void recursive_isPrefixOf(Phone phone, Phone otherPhone) {
+		recursive_isPrefixOf(phone, otherPhone);
+	}
 }
