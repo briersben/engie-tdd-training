@@ -2,50 +2,37 @@ package com.electrabel.training.phonenumbers.v5;
 
 import org.apache.log4j.Logger;
 
+import com.electrabel.training.util.Utils;
+
 public class Phone {
     private static final Logger LOG = Logger.getLogger(Phone.class);
 
 	private String name;
-	private String phone;
+	private String phoneNumber;
 	
-	public Phone(String name, String phone) {
+	public Phone(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+	public Phone(String name, String phoneNumber) {
 		this.name = name;
-		this.phone = phone;
+		this.phoneNumber = phoneNumber;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public String getPrefix() {
-		int indexFirstWhitespace = phone.indexOf(" ");
-		if (indexFirstWhitespace != -1)
-			return phone.substring(0, indexFirstWhitespace);
-		return phone;
+	public String getPhoneNumberWithoutWhitespaces() {
+		return Utils.removeWhitespaces(phoneNumber);
 	}
 
 	public boolean isStartsWith(Phone otherPhone) {
-		String phoneWithoutWhitespaces = removeWhitespaces(getPhone());
-		String otherPhoneWithoutWhitespaces = removeWhitespaces(otherPhone.getPhone());
-		if (phoneWithoutWhitespaces.startsWith(otherPhoneWithoutWhitespaces)) {
-			System.out.println(this.toString() + " starts with prefix " + otherPhone.toString());
+		if (getPhoneNumberWithoutWhitespaces().startsWith(otherPhone.getPhoneNumberWithoutWhitespaces())) {
+			System.out.println("> " + this.toString() + " starts with " + otherPhone.toString());
 			return true;
 		}
-		
 		return false;
 	}
 	
-	private static String removeWhitespaces(String phone) {
-		return phone.replaceAll("\\s","");
-	}
-
 	@Override
 	public String toString() {
-		return "Phone [name=" + name + ", phone=" + phone + "]";
+		return "Phone [name=" + name + ", phone=" + phoneNumber + "]";
 	}
 
 	@Override
@@ -62,10 +49,10 @@ public class Phone {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (phone == null) {
-			if (other.phone != null)
+		if (phoneNumber == null) {
+			if (other.phoneNumber != null)
 				return false;
-		} else if (!phone.equals(other.phone))
+		} else if (!phoneNumber.equals(other.phoneNumber))
 			return false;
 		return true;
 	}
@@ -75,7 +62,7 @@ public class Phone {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((phone == null) ? 0 : phone.hashCode());
+		result = prime * result + ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
 		return result;
 	}
 

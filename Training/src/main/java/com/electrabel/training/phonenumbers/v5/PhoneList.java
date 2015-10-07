@@ -1,6 +1,8 @@
 package com.electrabel.training.phonenumbers.v5;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -20,6 +22,9 @@ public class PhoneList {
 		phoneList.add(phone);
 	}
 	
+	/**
+	 * --- First solution iterating over the complete collection
+	 */
 	public boolean isConsistent() {
 		if (phoneList.isEmpty())
 			return true;
@@ -43,7 +48,6 @@ public class PhoneList {
 		
 		// iterate over the phoneList, and check against the given phone
 		for (Phone otherPhone : phoneList) {
-
 			// exclude current phone
 			if (otherPhone == phone)
 				continue;
@@ -60,17 +64,30 @@ public class PhoneList {
 
 	
 	/**
-	 * TODO try to do this with recursivity.
-	 * 
-	 * 1 sort list phoneList.sort();
-	 * 2 call recursive function phoneList.isConsistent();
-	 * 3 check cases:
-	 * - empty list = consistent
-	 * - list contains 1 phone  > remove element > recursive call
-	 * - list contains 2 phones > check prefix > remove element 
-	 * - list contains more than 2 phones > recursive?
+	 * --- Second solution using a recursive method.
 	 */
-	private void recursive_isPrefixOf(Phone phone, Phone otherPhone) {
-		recursive_isPrefixOf(phone, otherPhone);
+	public boolean isConsistent_recursive() {
+		// first sort the list lexicographically (alphabetically and shortest first)
+		Collections.sort(phoneList, new PhoneNumberComparator());
+		return isConsistent_recursive(phoneList);
 	}
+
+	public boolean isConsistent_recursive(List<Phone> phoneList) {
+		// case 1: an empty list is consistent
+		// case 2: a list containing only 1 element is consistent
+		if (phoneList.size() < 2)
+			return true;
+		
+		// case 3: a list contains more than 1 element > compare
+		Phone phone = phoneList.get(0);
+		Phone otherPhone = phoneList.get(1);
+
+		System.out.println("check if otherPhone " + otherPhone + " starts with " + phone);
+		if (otherPhone.isStartsWith(phone))
+			return false;
+		
+		phoneList.remove(0);
+		return isConsistent_recursive(phoneList);
+	}
+	
 }

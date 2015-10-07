@@ -28,11 +28,12 @@ public class PhoneNumbersV5Test {
 	static final Phone BOB = new Phone("Bob", "91 12 54 26");
 	static final Phone ALICE = new Phone("Alice", "97 625 992");
 	static final Phone EMERGENCY = new Phone("Emergency", "911");
+	static final Phone JACK = new Phone("Jack", "91 12 12 34");
 	
 	@Test
 	public void empty_list_is_consistent_list() {
 		PhoneList phoneList = new PhoneList();
-		Assert.assertTrue(phoneList.isConsistent());
+		Assert.assertTrue(phoneList.isConsistent_recursive());
 	}
 
 	@Test
@@ -40,7 +41,7 @@ public class PhoneNumbersV5Test {
 		PhoneList phoneList = new PhoneList();
 		phoneList.add(BOB);
 		phoneList.add(ALICE);
-		Assert.assertTrue(phoneList.isConsistent());
+		Assert.assertTrue(phoneList.isConsistent_recursive());
 	}
 
 	@Test
@@ -49,12 +50,21 @@ public class PhoneNumbersV5Test {
 		phoneList.add(BOB);
 		phoneList.add(ALICE);
 		phoneList.add(EMERGENCY);
-		Assert.assertFalse(phoneList.isConsistent());
+		Assert.assertFalse(phoneList.isConsistent_recursive());
 	}
 
 	@Test
+	public void inconsistent_list() {
+		PhoneList phoneList = new PhoneList();
+		phoneList.add(new Phone("111"));
+		phoneList.add(new Phone("222"));
+		phoneList.add(new Phone("222 222"));
+		Assert.assertFalse(phoneList.isConsistent_recursive());
+	}
+
+	//@Test
 	public void test_load_phone_numbers() throws IOException {
 		PhoneList phoneList = PhoneNumbersV5.loadPhoneNumbers();
-		Assert.assertTrue(phoneList.isConsistent());
+		Assert.assertTrue(phoneList.isConsistent_recursive());
 	}
 }
