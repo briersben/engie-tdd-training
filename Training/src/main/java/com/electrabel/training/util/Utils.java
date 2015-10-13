@@ -6,5 +6,4 @@ public class Utils {
 		return text.replaceAll("\\s","");
 	}
 
-
 }
