@@ -2,7 +2,6 @@ package com.electrabel.training.phonenumbers.v5;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -67,9 +66,12 @@ public class PhoneList {
 	 * --- Second solution using a recursive method.
 	 */
 	public boolean isConsistent_recursive() {
-		// first sort the list lexicographically (alphabetically and shortest first)
-		Collections.sort(phoneList, new PhoneNumberComparator());
-		return isConsistent_recursive(phoneList);
+		// first, make a copy the original phone list
+		List<Phone> copyOfPhoneList = new ArrayList<Phone>(this.phoneList);
+		// next, sort the list lexicographically (alphabetically and shortest first)
+		Collections.sort(copyOfPhoneList, new PhoneNumberComparator());
+		// finally call the recursive method
+		return isConsistent_recursive(new ArrayList<Phone>(copyOfPhoneList));
 	}
 
 	public boolean isConsistent_recursive(List<Phone> phoneList) {
@@ -82,7 +84,7 @@ public class PhoneList {
 		Phone phone = phoneList.get(0);
 		Phone otherPhone = phoneList.get(1);
 
-		System.out.println("check if otherPhone " + otherPhone + " starts with " + phone);
+		LOG.debug("check if otherPhone " + otherPhone + " starts with " + phone);
 		if (otherPhone.isStartsWith(phone))
 			return false;
 		

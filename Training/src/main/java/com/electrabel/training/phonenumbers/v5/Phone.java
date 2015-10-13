@@ -24,7 +24,7 @@ public class Phone {
 
 	public boolean isStartsWith(Phone otherPhone) {
 		if (getPhoneNumberWithoutWhitespaces().startsWith(otherPhone.getPhoneNumberWithoutWhitespaces())) {
-			System.out.println("> " + this.toString() + " starts with " + otherPhone.toString());
+			LOG.debug("> " + this.toString() + " starts with " + otherPhone.toString());
 			return true;
 		}
 		return false;

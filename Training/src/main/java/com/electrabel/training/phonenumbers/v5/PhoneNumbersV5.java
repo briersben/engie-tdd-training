@@ -24,7 +24,7 @@ public class PhoneNumbersV5 {
 				Phone phone = new Phone(nextLine[0], nextLine[1]);
 				phoneList.add(phone);
 			} else {
-				System.out.println("skipping invalid phone record: " + nextLine.toString());
+				LOG.debug("skipping invalid phone record: " + nextLine.toString());
 			}
 		}
 		reader.close();
