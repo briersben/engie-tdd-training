@@ -9,6 +9,12 @@ public class BookSet {
 	
 	private static final float UNIT_PRICE = 8;
 	
+	private static final int DISCOUNT_SET_OF_1 = 0;
+	private static final int DISCOUNT_SET_OF_2 = 5;
+	private static final int DISCOUNT_SET_OF_3 = 10;
+	private static final int DISCOUNT_SET_OF_4 = 20;
+	private static final int DISCOUNT_SET_OF_5 = 25;
+	
 	public void add(String book) {
 		books.add(book);
 	}
@@ -18,10 +24,18 @@ public class BookSet {
 	}
 	
 	public BigDecimal calculateDiscountedPrice() {
-		BigDecimal totalPrice = BigDecimal.valueOf(books.size() * UNIT_PRICE);
+		return calculateDiscountedPrice(books.size());
+	}
+
+	public BigDecimal calculateDisountedPriceWithNewBook() {
+		return calculateDiscountedPrice(books.size() + 1);
+	}
+
+	private BigDecimal calculateDiscountedPrice(int numberOfBooks) {
+		BigDecimal totalPrice = BigDecimal.valueOf(numberOfBooks * UNIT_PRICE);
 		return totalPrice.subtract(getDiscount(totalPrice));
 	}
-	
+
 	private BigDecimal getDiscount(BigDecimal totalPrice) {
 		int discountPercentage = getDiscountPercentage(books.size());
 		return totalPrice.multiply(new BigDecimal(discountPercentage)).divide(new BigDecimal(100));
@@ -31,16 +45,16 @@ public class BookSet {
 		int discount = 0;
 		switch (numberOfBooksInSet) {
 		case 5:
-			discount = 25;
+			discount = DISCOUNT_SET_OF_5;
 			break;
 		case 4:
-			discount = 20;
+			discount = DISCOUNT_SET_OF_4;
 			break;
 		case 3:
-			discount = 10;
+			discount = DISCOUNT_SET_OF_3;
 			break;
 		case 2:
-			discount = 5;
+			discount = DISCOUNT_SET_OF_2;
 			break;
 		default:
 			break;
@@ -48,4 +62,19 @@ public class BookSet {
 		return discount;
 	}
 
+	private boolean isSetOf2BetterThanSetOf1() {
+		return DISCOUNT_SET_OF_2 > DISCOUNT_SET_OF_1; 
+	}
+	
+	private boolean isSetOf3BetterThanSetOf2() {
+		return DISCOUNT_SET_OF_3 > DISCOUNT_SET_OF_2; 
+	}
+
+	private boolean isSetOf4BetterThanSetOf3() {
+		return DISCOUNT_SET_OF_3 > DISCOUNT_SET_OF_2; 
+	}
+
+	private boolean isSetOf5BetterThanSetOf4() {
+		return DISCOUNT_SET_OF_3 > DISCOUNT_SET_OF_2; 
+	}
 }

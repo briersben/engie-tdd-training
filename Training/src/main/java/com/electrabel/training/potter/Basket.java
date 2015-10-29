@@ -48,7 +48,11 @@ public class Basket {
 		}
 	}
 
-	public BigDecimal calculateDiscountedPrice(List<BookSet> bookSets) {
+	private void decideWhichSetIsTheBestOption(List<BookSet> bookSets, String book) {
+		
+	}
+	
+	private BigDecimal calculateDiscountedPrice(List<BookSet> bookSets) {
 		BigDecimal price = BigDecimal.ZERO;
 		for (BookSet bookSet : bookSets) {
 			price = price.add(bookSet.calculateDiscountedPrice());
