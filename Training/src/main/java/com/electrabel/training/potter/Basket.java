@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Basket {
-	private Map<String,Integer> bookList = new HashMap<String,Integer>();
+	private Map<String,Integer> bookList = new TreeMap<String,Integer>();
 
 	public void add(String book, int quantity) {
 		bookList.put(book, quantity);
@@ -16,7 +17,10 @@ public class Basket {
 	public BigDecimal getTotalPrice() {
 		// create book sets
 		List<BookSet> bookSets = createBookSets();
-		
+
+		// 
+		reallocateBooksInSetsToGetBetterDiscount(bookSets);
+
 		// calculate total price
 		return calculateDiscountedPrice(bookSets);
 	}
@@ -60,4 +64,18 @@ public class Basket {
 		return price;
 	}
 
+	
+	
+	// --- option 2 : check if move book to other smaller size set results in better outcome (discount)
+	
+	private boolean reallocateBooksInSetsToGetBetterDiscount(List<BookSet> bookSets) {
+		for (BookSet bookSet : bookSets) {
+			bookSet.reallocateBooksInSetsToGetBetterDiscount(bookSets);
+		}
+		
+		return false;
+	}
+
+	
+	
 }
