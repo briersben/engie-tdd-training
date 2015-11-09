@@ -18,7 +18,7 @@ public class Basket {
 		// create book sets
 		List<BookSet> bookSets = createBookSets();
 
-		// 
+		// reallocate books in sets
 		reallocateBooksInSetsToGetBetterDiscount(bookSets);
 
 		// calculate total price
@@ -59,7 +59,7 @@ public class Basket {
 	private BigDecimal calculateDiscountedPrice(List<BookSet> bookSets) {
 		BigDecimal price = BigDecimal.ZERO;
 		for (BookSet bookSet : bookSets) {
-			price = price.add(bookSet.calculateDiscountedPrice());
+			price = price.add(bookSet.getDiscountedPrice());
 		}
 		return price;
 	}

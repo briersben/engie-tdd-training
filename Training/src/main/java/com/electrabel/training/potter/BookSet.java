@@ -6,8 +6,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 public class BookSet {
-	private List<String> books = new ArrayList<String>();
+    private static final Logger LOG = Logger.getLogger(BookSet.class);
+
+    private List<String> books = new ArrayList<String>();
 	
 	private static final float UNIT_PRICE = 8;
 	
@@ -36,22 +40,26 @@ public class BookSet {
 		return books.contains(book);
 	}
 	
-	public BigDecimal calculateDiscountedPrice() {
-		return calculateDiscountedPrice(books.size());
+	public BigDecimal getDiscountedPrice() {
+		return getTotalPrice().subtract(getDiscount());
 	}
 
-	public BigDecimal calculateDisountedPriceWithNewBook() {
-		return calculateDiscountedPrice(books.size() + 1);
+	private BigDecimal getTotalPrice() {
+		return BigDecimal.valueOf(books.size() * UNIT_PRICE);
+	}
+	
+	private BigDecimal getDiscount() {
+		return getDiscount(books.size());
 	}
 
-	private BigDecimal calculateDiscountedPrice(int numberOfBooks) {
+	private BigDecimal getDiscount(int numberOfBooks) {
 		BigDecimal totalPrice = BigDecimal.valueOf(numberOfBooks * UNIT_PRICE);
-		return totalPrice.subtract(getDiscount(totalPrice));
+		int discountPercentage = getDiscountPercentage(numberOfBooks);
+		return totalPrice.multiply(new BigDecimal(discountPercentage)).divide(new BigDecimal(100));
 	}
 
-	private BigDecimal getDiscount(BigDecimal totalPrice) {
-		int discountPercentage = getDiscountPercentage(books.size());
-		return totalPrice.multiply(new BigDecimal(discountPercentage)).divide(new BigDecimal(100));
+	private BigDecimal getDiscountWithAdditionalBook() {
+		return BigDecimal.ZERO;
 	}
 	
 	private int getDiscountPercentage(int numberOfBooksInSet) {
@@ -75,74 +83,93 @@ public class BookSet {
 		return discount;
 	}
 
-	private boolean isSetOf2BetterThanSetOf1() {
-		return DISCOUNT_SET_OF_2 > DISCOUNT_SET_OF_1; 
-	}
-	
-	private boolean isSetOf3BetterThanSetOf2() {
-		return DISCOUNT_SET_OF_3 > DISCOUNT_SET_OF_2; 
-	}
-
-	private boolean isSetOf4BetterThanSetOf3() {
-		return DISCOUNT_SET_OF_3 > DISCOUNT_SET_OF_2; 
-	}
-
-	private boolean isSetOf5BetterThanSetOf4() {
-		return DISCOUNT_SET_OF_3 > DISCOUNT_SET_OF_2; 
-	}
-	
-	// --- option 1 : check if 2 sets of x is better than 1 set of (x+1)
-	private boolean is2SetsOf4BetterThanOneSetOf5() {
-		return false;
-	}
-	
-	// --- option 2 : check if move book to other smaller size set results in better outcome (discount)
-	
 	public void reallocateBooksInSetsToGetBetterDiscount(List<BookSet> otherBookSets) {
 		for (BookSet otherBookSet : otherBookSets) {
-			reallocateBooksInSetsToGetBetterDiscount(otherBookSet);
+			reallocateBooksInSetsToGetBetterDiscount_OPTION_1(otherBookSet);
 		}
 	}
 
-	private void reallocateBooksInSetsToGetBetterDiscount(BookSet otherBookSet) {
-		if (otherBookSet == this)
+
+	// --- OPTION 1 : check if 2 sets of x is better than 1 set of (x+1) and 1 set of (x-1)
+	
+	private void reallocateBooksInSetsToGetBetterDiscount_OPTION_1(BookSet otherBookSet) {
+		if (otherBookSet == this || otherBookSet.books.size() >= this.books.size())
 			return;
-
-		System.out.println("reallocateBooksInSetsToGetBetterDiscount : bookSet " + toString());
-		System.out.println("reallocateBooksInSetsToGetBetterDiscount : otherBookSet " + otherBookSet.toString());
 		
-		BigDecimal currentDiscount = calculateDiscountedPrice();
-		BigDecimal currentDiscountOtherBookSet = otherBookSet.calculateDiscountedPrice();
+		switch (books.size()) {
+		case 5:
+			if (otherBookSet.books.size() == 3 && isTwoSetsOf4BetterThanOneSetOf5AndOneSetOf3()) {
+				String lastBook = books.get(books.size() - 1);
+				otherBookSet.add(lastBook);
+				remove(lastBook);
+			}
+		case 4:
+			if (otherBookSet.books.size() == 2 && isTwoSetsOf3BetterThanOneSetOf4AndOneSetOf2()) {
+				String lastBook = books.get(books.size() - 1);
+				otherBookSet.add(lastBook);
+				remove(lastBook);
+			}
+		case 3:
+			if (otherBookSet.books.size() == 1 && isTwoSetsOf2BetterThanOneSetOf3AndOneSetOf1()) {
+				String lastBook = books.get(books.size() - 1);
+				otherBookSet.add(lastBook);
+				remove(lastBook);
+			}
+		default:
+		}
+	}
 
+	private boolean isTwoSetsOf4BetterThanOneSetOf5AndOneSetOf3() {
+		return isTwoSetsOfBetterThanSetsOf(4, 5, 3);
+	}
+
+	private boolean isTwoSetsOf3BetterThanOneSetOf4AndOneSetOf2() {
+		return isTwoSetsOfBetterThanSetsOf(3, 4, 2);
+	}
+
+	private boolean isTwoSetsOf2BetterThanOneSetOf3AndOneSetOf1() {
+		return isTwoSetsOfBetterThanSetsOf(2, 3, 1);
+	}
+
+	private boolean isTwoSetsOfBetterThanSetsOf(int twoSetsOf, int oneSetOf, int anotherSetOf) {
+		BigDecimal discount = getDiscount(oneSetOf).add(getDiscount(anotherSetOf));
+		BigDecimal discountTwoSetsOf = getDiscount(twoSetsOf).multiply(new BigDecimal(2));
+		return discountTwoSetsOf.compareTo(discount) > 0;
+	}
+
+
+	// --- OPTION 2 : check if move book to other smaller size set results in better outcome (discount)
+	
+	private void reallocateBooksInSetsToGetBetterDiscount_OPTION_2(BookSet otherBookSet) {
+		if (otherBookSet == this || otherBookSet.books.size() >= this.books.size())
+			return;
+		
+		LOG.debug("[bookSet] " + toString() + " - [otherBookSet] " + otherBookSet.toString());
+		
+		BigDecimal currentDiscount = getDiscount().add(otherBookSet.getDiscount());
+		
 		BookSet newBookSet = new BookSet(this);
 		Collections.reverse(newBookSet.books);
 		BookSet newOtherBookSet = new BookSet(otherBookSet);
 		
 		// move book
 		for (String book : newBookSet.books) {
-			if (newOtherBookSet.contains(book))
-				continue;
-			System.out.println("[test] " + book + " added to newOtherBookSet ");
-			System.out.println("[test] " + book + " removed from newBookSet ");
-			newOtherBookSet.add(book);
-			newBookSet.remove(book);
-			BigDecimal discount = newBookSet.calculateDiscountedPrice();
-			BigDecimal discountOtherBookSet = newOtherBookSet.calculateDiscountedPrice();
-			
-			if (discount.compareTo(currentDiscount) > 0) {
-				otherBookSet.add(book);
-				this.remove(book);
+			if (!newOtherBookSet.contains(book)) {
+				LOG.debug("[test] " + book + " removed from bookSet and added to otherBookSet ");
+				newOtherBookSet.add(book);
+				newBookSet.remove(book);
+				BigDecimal discount = newBookSet.getDiscount().add(newOtherBookSet.getDiscount());
+				
+				if (discount.compareTo(currentDiscount) > 0) {
+					otherBookSet.add(book);
+					remove(book);
+				}
 				break;
 			}
-			newOtherBookSet.remove(book);
-			newBookSet.add(book);
 		}
-	}
 
-//	private boolean isBetterInSet() {
-//	// create clone of bookSets
-//	
-//}
+		LOG.debug("[bookSet] " + toString() + " - [otherBookSet] " + otherBookSet.toString());
+	}
 
 	@Override
 	public String toString() {

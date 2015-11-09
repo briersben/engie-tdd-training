@@ -33,8 +33,6 @@ import org.junit.Test;
  * > Answer: 51.20 EUR 
  */
 public class PotterTest {
-
-//	private static final float DELTA = (float) 0.001;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -63,17 +61,17 @@ public class PotterTest {
 	@Test
 	public void should_return_discounted_price_for_a_single_set() {
 		BookSet bookSet = new BookSet();
-		assertEquals(new BigDecimal("0.0"), bookSet.calculateDiscountedPrice());
+		assertEquals(new BigDecimal("0.0"), bookSet.getDiscountedPrice());
 		bookSet.add("Book1");
-		assertEquals(new BigDecimal("8.0"), bookSet.calculateDiscountedPrice());
+		assertEquals(new BigDecimal("8.0"), bookSet.getDiscountedPrice());
 		bookSet.add("Book2");
-		assertEquals(new BigDecimal("15.2"), bookSet.calculateDiscountedPrice());
+		assertEquals(new BigDecimal("15.2"), bookSet.getDiscountedPrice());
 		bookSet.add("Book3");
-		assertEquals(new BigDecimal("21.6"), bookSet.calculateDiscountedPrice());
+		assertEquals(new BigDecimal("21.6"), bookSet.getDiscountedPrice());
 		bookSet.add("Book4");
-		assertEquals(new BigDecimal("25.6"), bookSet.calculateDiscountedPrice());
+		assertEquals(new BigDecimal("25.6"), bookSet.getDiscountedPrice());
 		bookSet.add("Book5");
-		assertEquals(new BigDecimal("30.0"), bookSet.calculateDiscountedPrice());
+		assertEquals(new BigDecimal("30.0"), bookSet.getDiscountedPrice());
 	}
 
 	@Test
